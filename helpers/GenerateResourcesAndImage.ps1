@@ -86,8 +86,7 @@ Function GenerateResourcesAndImage {
         [Switch] $Force
     )
 
-    if (([string]::IsNullOrEmpty($GithubFeedToken)))
-    {
+    if (([string]::IsNullOrEmpty($GithubFeedToken))) {
         Write-Error "'-GithubFeedToken' parameter is not specified. You have to specify valid GitHub PAT to download tool packages from GitHub Package Registry"
         exit 1
     }
@@ -110,11 +109,12 @@ Function GenerateResourcesAndImage {
     }
 
     if ($alreadyExists) {
-        if($Force -eq $true) {
+        if ($Force -eq $true) {
             # Cleanup the resource group if it already exitsted before
             Remove-AzureRmResourceGroup -Name $ResourceGroupName -Force
             New-AzureRmResourceGroup -Name $ResourceGroupName -Location $AzureLocation
-        } else {
+        }
+        else {
             $title = "Delete Resource Group"
             $message = "The resource group you specified already exists. Do you want to clean it up?"
 
@@ -130,21 +130,22 @@ Function GenerateResourcesAndImage {
             $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no, $stop)
             $result = $host.ui.PromptForChoice($title, $message, $options, 0)
 
-            switch ($result)
-            {
+            switch ($result) {
                 0 { Remove-AzureRmResourceGroup -Name $ResourceGroupName -Force; New-AzureRmResourceGroup -Name $ResourceGroupName -Location $AzureLocation }
                 1 { <# Do nothing #> }
                 2 { exit }
             }
         }
-    } else {
+    }
+    else {
         New-AzureRmResourceGroup -Name $ResourceGroupName -Location $AzureLocation
     }
 
     # This script should follow the recommended naming conventions for azure resources
-    $storageAccountName = if($ResourceGroupName.EndsWith("-rg")) {
-        $ResourceGroupName.Substring(0, $ResourceGroupName.Length -3)
-    } else { $ResourceGroupName }
+    $storageAccountName = if ($ResourceGroupName.EndsWith("-rg")) {
+        $ResourceGroupName.Substring(0, $ResourceGroupName.Length - 3)
+    }
+    else { $ResourceGroupName }
 
     # Resource group names may contain special characters, that are not allowed in the storage account name
     $storageAccountName = $storageAccountName.Replace("-", "").Replace("_", "").Replace("(", "").Replace(")", "").ToLower()
